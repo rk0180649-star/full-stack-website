@@ -14,7 +14,7 @@ const Page = () => {
     const fetchdata = async () => {
       try {
         setloading(true);
-        const res = await axios.get(`http://localhost:5000/api/application/${id}`);
+        const res = await axios.get(`https://full-stack-website-h8ju.onrender.com/api/application/${id}`);
         console.log("Fetched Data:", res.data);
         // Agar backend { application: {...} } bhej raha ho ya direct object bhej raha ho:
         setdata(res.data.application || res.data);

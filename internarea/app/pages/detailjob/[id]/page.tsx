@@ -91,7 +91,7 @@ const page = () => {
          useEffect(()=>{
             const fetchdata = async () =>{
               try{
-                const res=await axios.get(`http://localhost:5000/api/job/${id}`)
+                const res=await axios.get(`https://full-stack-website-h8ju.onrender.com/api/job/${id}`)
                 setjob(res.data);
               }catch(error){
                 console.log(error);
@@ -126,7 +126,7 @@ const page = () => {
         Application: id,
         availability
       }
-      await axios.post("http://localhost:5000/api/application", applicationdata)
+      await axios.post("https://full-stack-website-h8ju.onrender.com/api/application", applicationdata)
       toast.success("Application submit successfully");
       router.push('/job')
 

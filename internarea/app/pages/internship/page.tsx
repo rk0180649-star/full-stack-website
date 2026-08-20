@@ -52,7 +52,7 @@ const page = () => {
        useEffect(()=>{
           const fetchdata = async () =>{
             try{
-              const res=await axios.get("http://localhost:5000/api/internship")
+              const res=await axios.get("https://full-stack-website-h8ju.onrender.com/api/internship")
               setinternship(res.data);
               setFilteredInternships(res.data);
             }catch(error){

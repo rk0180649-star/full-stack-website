@@ -43,7 +43,7 @@ const Page = () => {
     }
     try{
       setisloading(true)
-      const res=await axios.post("http://localhost:5000/api/job", formData)
+      const res=await axios.post("https://full-stack-website-h8ju.onrender.com/api/job", formData)
       toast.success("job posted succefully")
       router.push("/pages/adminpanel")
 

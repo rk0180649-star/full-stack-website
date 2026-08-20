@@ -65,7 +65,7 @@ const page = () => {
            useEffect(()=>{
               const fetchdata = async () =>{
                 try{
-                  const res=await axios.get("http://localhost:5000/api/application")
+                  const res=await axios.get("https://full-stack-website-h8ju.onrender.com/api/application")
                   setdata(res.data);
                 
                 }catch(error){

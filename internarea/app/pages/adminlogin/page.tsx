@@ -29,7 +29,7 @@ const page = () => {
     }
     try{
       setisloading(true)
-      const res=await axios.post("http://localhost:5000/api/admin/adminlogin", formdata)
+      const res=await axios.post("https://full-stack-website-h8ju.onrender.com/api/admin/adminlogin", formdata)
       toast.success("logged in succefully")
       router.push("/pages/adminpanel")
 

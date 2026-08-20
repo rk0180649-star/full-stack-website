@@ -85,7 +85,7 @@ const page = () =>{
        useEffect(()=>{
           const fetchdata = async () =>{
             try{
-              const res=await axios.get("http://localhost:5000/api/job")
+              const res=await axios.get("https://full-stack-website-h8ju.onrender.com/api/job")
               setjob(res.data);
               setFilteredJobs(res.data);
             }catch(error){
