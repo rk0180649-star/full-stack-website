@@ -63,6 +63,12 @@ const Navbar = () => {
               </div>
             </div>
 
+            <div>
+              <button className="bg-blue-500 text-white px-6 py-2 rounded-full">
+              <Link href="/pages/gmailloginpage">Email Login</Link>
+            </button>
+            </div>
+
             {/* Desktop Auth Buttons */}
             <div className="hidden md:flex items-center space-x-4">
               {user ? (
