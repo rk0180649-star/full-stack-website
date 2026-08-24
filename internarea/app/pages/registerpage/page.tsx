@@ -20,7 +20,7 @@ export default function RegisterPage() {
   const [loadingRegister, setLoadingRegister] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
 
-  const BACKEND_URL = "https://full-stack-website-h8ju.onrender.com/api/auth";
+ const BACKEND_URL = "https://full-stack-website-h8ju.onrender.com/api/auth";
 
   // Step 1: Send OTP Call (Sirf send-otp route par call jayega)
   const handleSendOtp = async () => {
