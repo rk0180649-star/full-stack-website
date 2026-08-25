@@ -1,4 +1,5 @@
-"use client";
+/*"use client";
+
 
 import { useState } from "react";
 import Link from "next/link";
@@ -6,9 +7,9 @@ import { useRouter } from "next/navigation";
 import { auth, provider } from "@/app/firebase/firebase";
 import { signInWithPopup } from "firebase/auth";
 
+
 export default function LoginPage() {
   const router = useRouter();
-
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -43,7 +44,70 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
+  };*/
+
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { auth, provider } from "@/app/firebase/firebase";
+import { signInWithPopup } from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { login } from "@/app/Feature/Userslice"; // Agar path alag ho toh match kar lein (e.g., "@/app/Feature/Userslice")
+
+export default function LoginPage() {
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const BACKEND_URL = "https://full-stack-website-h8ju.onrender.com/api/auth";
+
+  // 1. Manual Login (Email / Mobile)
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identifier, password }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Invalid credentials");
+      }
+
+      // LocalStorage update
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // REDUX State update (Iski wajah se poore app ko login state mil jayegi)
+      dispatch(
+        login({
+          name: data.user.name,
+          email: data.user.email,
+          photo: data.user.photo || "",
+          uid: data.user._id || data.user.id,
+        })
+      );
+
+      router.push("/pages/profile");
+    } catch (err: any) {
+      setError(err.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // ... (baki ka JSX / Google Login code wahi rahega)
 
   // 2. Google Login
   const handleGoogleLogin = async () => {

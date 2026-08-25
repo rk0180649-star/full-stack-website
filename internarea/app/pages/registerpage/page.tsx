@@ -23,7 +23,7 @@ export default function RegisterPage() {
  const BACKEND_URL = "https://full-stack-website-h8ju.onrender.com/api/auth";
 
   // Step 1: Send OTP Call (Sirf send-otp route par call jayega)
-  const handleSendOtp = async () => {
+  /*const handleSendOtp = async () => {
     if (!email) {
       setMessage({ text: "Please enter your email first!", type: "error" });
       return;
@@ -53,8 +53,63 @@ export default function RegisterPage() {
       setLoadingOtp(false);
     }
   };
+*/
+// Step 1: Send OTP Call (All fields validated)
+  const handleSendOtp = async () => {
+    // 1. Check all required fields
+    if (!name.trim()) {
+      setMessage({ text: "Please enter your Full Name!", type: "error" });
+      return;
+    }
 
-  // Step 2: Verify OTP & Register (Mobile bhi sath jayega)
+    if (!email.trim()) {
+      setMessage({ text: "Please enter your Email Address!", type: "error" });
+      return;
+    }
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setMessage({ text: "Please enter a valid Email Address!", type: "error" });
+      return;
+    }
+
+    if (!mobile.trim() || mobile.length !== 10) {
+      setMessage({ text: "Please enter a valid 10-digit Mobile Number!", type: "error" });
+      return;
+    }
+
+    if (!password.trim() || password.length < 6) {
+      setMessage({ text: "Password must be at least 6 characters long!", type: "error" });
+      return;
+    }
+
+    setLoadingOtp(true);
+    setMessage({ text: "", type: "" });
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/send-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, mobile, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to send OTP");
+      }
+
+      setIsOtpSent(true);
+      setMessage({ text: "OTP sent successfully to your email!", type: "success" });
+    } catch (err: any) {
+      setMessage({ text: err.message, type: "error" });
+    } finally {
+      setLoadingOtp(false);
+    }
+  }; 
+
+// Step 2: Verify OTP & Register (Mobile bhi sath jayega)
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 

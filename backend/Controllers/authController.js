@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 // 1. Send OTP Function
+/*
 exports.sendOtp = async (req, res) => {
   try {
     const { email } = req.body;
@@ -15,6 +16,44 @@ exports.sendOtp = async (req, res) => {
       return res.status(400).json({ success: false, message: "User already exists" });
     }
 
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    await OTP.deleteMany({ email });
+    await OTP.create({ email, otp });
+    await sendEmail(email, otp);
+
+    res.status(200).json({ success: true, message: "OTP sent successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};*/
+
+exports.sendOtp = async (req, res) => {
+  try {
+    const { name, email, mobile, password } = req.body;
+
+    // 1. Mandatory fields check
+    if (!name || !email || !mobile || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Please fill all fields (Name, Email, Mobile, Password) before requesting OTP.",
+      });
+    }
+
+    // 2. Check if Email or Mobile already registered
+    const existingUser = await User.findOne({
+      $or: [{ email }, { mobile }],
+    });
+
+    if (existingUser) {
+      const conflictField = existingUser.email === email ? "Email" : "Mobile number";
+      return res.status(400).json({
+        success: false,
+        message: `${conflictField} is already registered! Please login.`,
+      });
+    }
+
+    // 3. Generate & Save OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     await OTP.deleteMany({ email });
