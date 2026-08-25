@@ -6,28 +6,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 // 1. Send OTP Function
-/*
-exports.sendOtp = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ success: false, message: "User already exists" });
-    }
-
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-    await OTP.deleteMany({ email });
-    await OTP.create({ email, otp });
-    await sendEmail(email, otp);
-
-    res.status(200).json({ success: true, message: "OTP sent successfully" });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};*/
-
 exports.sendOtp = async (req, res) => {
   try {
     const { name, email, mobile, password } = req.body;

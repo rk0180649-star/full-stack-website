@@ -21,39 +21,7 @@ export default function RegisterPage() {
   const [message, setMessage] = useState({ text: "", type: "" });
 
  const BACKEND_URL = "https://full-stack-website-h8ju.onrender.com/api/auth";
-
-  // Step 1: Send OTP Call (Sirf send-otp route par call jayega)
-  /*const handleSendOtp = async () => {
-    if (!email) {
-      setMessage({ text: "Please enter your email first!", type: "error" });
-      return;
-    }
-
-    setLoadingOtp(true);
-    setMessage({ text: "", type: "" });
-
-    try {
-      const res = await fetch(`${BACKEND_URL}/send-otp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to send OTP");
-      }
-
-      setIsOtpSent(true);
-      setMessage({ text: "OTP sent successfully to your email!", type: "success" });
-    } catch (err: any) {
-      setMessage({ text: err.message, type: "error" });
-    } finally {
-      setLoadingOtp(false);
-    }
-  };
-*/
+ 
 // Step 1: Send OTP Call (All fields validated)
   const handleSendOtp = async () => {
     // 1. Check all required fields

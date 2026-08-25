@@ -55,7 +55,7 @@ const Navbar = () => {
     }
   };
 
-  // ... baki ka JSX code waisa hi rahega
+
   return (
     <div className="relative sticky top-0 z-50">
       <nav className="bg-white shadow-md">
