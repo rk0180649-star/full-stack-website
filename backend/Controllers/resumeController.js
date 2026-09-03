@@ -7,6 +7,7 @@ const ResumeHistory = require("../Model/ResumeHistory");
 const User = require("../Model/User");
 
 // Resend instance initialize karein
+const resend = new Resend(process.env.RESEND_API_KEY);
 const RAZORPAY_KEY_ID = "rzp_test_TXTSZuElZoackt";
 const RAZORPAY_KEY_SECRET = "ncBgAb3FWpDtQzDV6uxL4O52";
 
@@ -14,6 +15,10 @@ const razorpay = new Razorpay({
   key_id: RAZORPAY_KEY_ID,
   key_secret: RAZORPAY_KEY_SECRET,
 });
+
+
+
+
 // 1. Email par OTP bhejna
 // Function ke upar User model hona chahiye:
 exports.sendResumeOtp = async (req, res) => {
