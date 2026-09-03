@@ -7,10 +7,12 @@ const ResumeHistory = require("../Model/ResumeHistory");
 const User = require("../Model/User");
 
 // Resend instance initialize karein
-const resend = new Resend(process.env.RESEND_API_KEY);
+const RAZORPAY_KEY_ID = "rzp_test_TXTSZuElZoackt";
+const RAZORPAY_KEY_SECRET = "ncBgAb3FWpDtQzDV6uxL4O52";
+
 const razorpay = new Razorpay({
-  key_id:"rzp_test_TXTSZuElZoacKt",
-  key_secret:"ncBgAb3FWpDtQzDV6uxL4o52",
+  key_id: RAZORPAY_KEY_ID,
+  key_secret: RAZORPAY_KEY_SECRET,
 });
 // 1. Email par OTP bhejna
 // Function ke upar User model hona chahiye:
@@ -110,7 +112,7 @@ exports.sendResumeOtp = async (req, res) => {
 
     // Razorpay Signature match karein
     const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .createHmac("sha256", "ncBgAb3FWpDtQzDV6uxL4O52")
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest("hex");
 
