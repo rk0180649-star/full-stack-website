@@ -55,6 +55,7 @@ exports.sendResumeOtp = async (req, res) => {
         console.error("Resend API Error:", error);
         return res.status(500).json({ success: false, message: error.message });
       }
+
       return res.json({ success: true, message: "OTP sent" });
     } catch (error) {
       console.error("Server Error:", error);

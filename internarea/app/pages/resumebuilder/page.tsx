@@ -12,7 +12,7 @@ declare global {
 }
 
 export default function ResumeBuilder() {
-  const BACKEND_URL = "http://localhost:5000";
+  const BACKEND_URL = "https://full-stack-website-h8ju.onrender.com";
 
   // Redux se logged in user nikaalein
   const user = useSelector((state: any) => state.user?.user);
