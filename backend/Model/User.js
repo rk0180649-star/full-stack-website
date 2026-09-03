@@ -23,6 +23,14 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
+  hasPurchasedResume: {
+  type: Boolean,
+  default: false,
+},
+purchasedResumeId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "ResumeHistory",
+},
   createdAt: {
     type: Date,
     default: Date.now,
