@@ -12,7 +12,7 @@ declare global {
 
 export default function ResumeBuilder() {
   // Live deployment ke liye live URL rakhein, local test ke liye localhost:5000
-   const BACKEND_URL = "https://full-stack-website-h8ju.onrender.com";
+  const BACKEND_URL = "https://full-stack-website-h8ju.onrender.com";
 
   const user = useSelector((state: any) => state.user?.user);
 
@@ -103,7 +103,7 @@ export default function ResumeBuilder() {
         headers: { "Content-Type": "application/json" },
       });
       const orderData = await orderRes.json();
- console.log(orderData)
+ 
       const options = {
         key: "rzp_test_TXYXVNehnLBLcI", // Exact matching key (small 'k')
         amount: orderData.amount,
