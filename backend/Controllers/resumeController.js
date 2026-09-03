@@ -9,8 +9,8 @@ const User = require("../Model/User");
 // Resend instance initialize karein
 const resend = new Resend(process.env.RESEND_API_KEY);
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
+  key_id:"rzp_test_TXTSZuElZoacKt",
+  key_secret:"ncBgAb3FWpDtQzDV6uxL4o52",
 });
 // 1. Email par OTP bhejna
 // Function ke upar User model hona chahiye:
