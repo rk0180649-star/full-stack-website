@@ -6,12 +6,10 @@ const OTP = require("../Model/OTP");
 const ResumeHistory = require("../Model/ResumeHistory");
 const User = require("../Model/User");
 
-// Secret scanner bypass trick (GitHub block nahi karega)
-const resendKey = process.env.RESEND_API_KEY || ("re_" + "DSTWpMGE_q4ny8DKYYmZGqMMCq9xc731T");
-const resend = new Resend(resendKey);
-
-const RAZORPAY_KEY_ID = "rzp_test_TXYXVNehnLBLcI";
-const RAZORPAY_KEY_SECRET = "9FSQLLYCfsp514JBQgr7HcpT";
+// Secret keys
+const resend = new Resend(process.env.RESEND_API_KEY);
+const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID;
+const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
 
 const razorpay = new Razorpay({
   key_id: RAZORPAY_KEY_ID,
@@ -25,23 +23,19 @@ exports.sendResumeOtp = async (req, res) => {
     if (!email) {
       return res.status(400).json({ success: false, message: "Email required hai" });
     }
-
     const existingUser = await User.findOne({ email });
     if (!existingUser) {
       return res.status(404).json({
         success: false,
-        message: "Aapka account register nahi hai. Kripya pehle register karein.",
+        message: "your account is not register first register.",
       });
     }
-
     const otp = crypto.randomInt(100000, 999999).toString();
-
     await OTP.findOneAndUpdate(
       { email },
       { otp, createdAt: new Date() },
       { upsert: true, new: true }
     );
-
     const { error } = await resend.emails.send({
       from: "InternArea <onboarding@resend.dev>",
       to: email,
@@ -55,12 +49,10 @@ exports.sendResumeOtp = async (req, res) => {
         </div>
       `,
     });
-
     if (error) {
       console.error("Resend API Error:", error);
       return res.status(500).json({ success: false, message: error.message });
     }
-
     return res.json({ success: true, message: "OTP sent" });
   } catch (error) {
     console.error("Server Error:", error);
@@ -77,7 +69,6 @@ exports.verifyResumeOtp = async (req, res) => {
     if (!record) {
       return res.status(400).json({ success: false, message: "Invalid ya expired OTP" });
     }
-
     await OTP.deleteOne({ _id: record._id });
     return res.json({ success: true, message: "OTP verified" });
   } catch (error) {
@@ -101,32 +92,7 @@ exports.createOrder = async (req, res) => {
     return res.status(500).json({ success: false, error: error.message });
   }
 };
-
-// 4. Payment Signature Verify karna + PDF Generate karna
-/*
-exports.verifyPaymentAndGenerate = async (req, res) => {
-  try {
-    const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-      resumeData,
-      userId,
-    } = req.body;
-
-    const payload = razorpay_order_id + "|" + razorpay_payment_id;
-    const expectedSignature = crypto
-      .createHmac("sha256", RAZORPAY_KEY_SECRET)
-      .update(payload.toString())
-      .digest("hex");
-
-    if (expectedSignature !== razorpay_signature) {
-      console.error("Signature Mismatch!");
-      console.error("Expected:", expectedSignature);
-      console.error("Received:", razorpay_signature);
-      return res.status(400).json({ success: false, message: "Payment verification failed" });
-    }
-*/
+// verifypayment 
 exports.verifyPaymentAndGenerate = async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, resumeData, userId } = req.body;
@@ -147,7 +113,6 @@ exports.verifyPaymentAndGenerate = async (req, res) => {
       console.log(" Signature mismatch hua!");
       return res.status(400).json({ success: false, message: "Payment verification failed" });
     }
-
 
     if (userId) {
       await ResumeHistory.updateMany({ user: userId }, { isDefault: false });
@@ -171,8 +136,6 @@ exports.verifyPaymentAndGenerate = async (req, res) => {
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"] 
     });
-
-    
     const page = await browser.newPage();
 
     const htmlContent = `
