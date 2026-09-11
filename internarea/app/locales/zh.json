@@ -1,0 +1,40 @@
+{
+  "internships": "实习",
+  "jobs": "工作",
+  "search_opportunities": "搜索机会",
+  "build_resume": "创建简历",
+  "email_login": "邮箱登录",
+  "google_btn": "通过 Google 继续",
+  "logout": "退出登录",
+  "admin": "管理员",
+
+
+  "hero_title": "让你的梦想职业成为现实",
+  "trending_on": "InternArea 热门推荐 🔥",
+  "grow_skills": "提升你的技能",
+  "connect_companies": "与顶尖公司建立联系",
+  "start_career": "开启您的职业之旅",
+  "learn_best": "向最优秀的人学习",
+  "latest_internships": "Intern Area 最新实习",
+  "popular_categories": "热门分类",
+  "category_big_brands": "知名品牌",
+  "category_work_from_home": "居家办公",
+  "category_part-time": "兼职",
+  "category_mba": "工商管理硕士",
+  "category_engineering": "工程",
+  "category_media": "媒体",
+  "category_design": "设计",
+  "category_data_science": "数据科学",
+  "latest_jobs": "最新职位",
+  "actively_hiring": "正在热招",
+  "internship": "实习",
+  "job": "工作",
+  "view_details": "查看详情",
+  "email_verification": "邮箱验证",
+  "otp_modal_desc": "请输入发送到您邮箱的验证码以选择法语。",
+  "otp_placeholder": "在此输入您的验证码",
+  "cancel": "取消",
+  "verify": "验证"
+
+
+}

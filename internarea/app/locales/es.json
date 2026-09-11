@@ -1,0 +1,40 @@
+{
+  "internships": "Pasantías",
+  "jobs": "Empleos",
+  "search_opportunities": "Buscar oportunidades",
+  "build_resume": "Crear currículum",
+  "email_login": "Iniciar sesión con correo",
+  "google_btn": "Continuar con Google",
+  "logout": "Cerrar sesión",
+  "admin": "Administrador",
+
+
+  "hero_title": "Haz realidad la carrera de tus sueños",
+  "trending_on": "Tendencias en InternArea 🔥",
+  "grow_skills": "Desarrolla tus habilidades",
+  "connect_companies": "Conéctate con las mejores empresas",
+  "start_career": "Comienza tu viaje profesional",
+  "learn_best": "Aprende de los mejores",
+  "latest_internships": "Últimas pasantías en Intern Area",
+  "popular_categories": "CATEGORÍAS POPULARES",
+  "category_big_brands": "Grandes Marcas",
+  "category_work_from_home": "Trabajo Remoto",
+  "category_part-time": "Medio Tiempo",
+  "category_mba": "MBA",
+  "category_engineering": "Ingeniería",
+  "category_media": "Medios de Comunicación",
+  "category_design": "Diseño",
+  "category_data_science": "Ciencia de Datos",
+  "latest_jobs": "Últimos Empleos",
+  "actively_hiring": "Contratando Activamente",
+  "internship": "Pasantía",
+  "job": "Empleo",
+  "view_details": "Ver Detalles",
+  "email_verification": "Verificación de Correo",
+  "otp_modal_desc": "Ingrese el OTP enviado a su correo electrónico para seleccionar Francés.",
+  "otp_placeholder": "Ingrese su OTP aquí",
+  "cancel": "Cancelar",
+  "verify": "Verificar"
+  
+
+}

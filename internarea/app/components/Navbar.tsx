@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "../Assets/logo.png";
 import Link from "next/link";
 import { auth, provider } from "../firebase/firebase";
@@ -9,6 +9,11 @@ import { toast } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
 import { selectuser, logout } from "../Feature/Userslice";
 import { useRouter } from "next/navigation";
+// for language import here
+import "../locales/i18n"; // i18n ko initialize karne ke liye
+import { useTranslation } from 'react-i18next';
+import { db } from "../firebase/firebase";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
 interface User {
   name: string;
@@ -55,6 +60,114 @@ const Navbar = () => {
     }
   };
 
+  //mutiple language setup start hero
+const [currentLang, setCurrentLang] = useState('en');
+const [showOtpModal, setShowOtpModal] = useState(false);
+const [otp, setOtp] = useState('');
+const { t, i18n } = useTranslation();
+
+//yeh code lagane se hydration problem and error 100% solve .
+const [mounted, setMounted] = useState(false);
+
+const languages = [
+  { code: 'en', label: 'English' },
+  { code: 'es', label: 'Español' },
+  { code: 'hi', label: 'हिन्दी' },
+  { code: 'pt', label: 'Português' },
+  { code: 'zh', label: '中文' },
+  { code: 'fr', label: 'Français' },
+];
+
+const handleLanguageChange = async (langCode: string) => {
+  if (langCode === 'fr') {
+    if (!user?.email) {
+      toast.error('Please log in first to select French!');
+      return;
+    }
+
+    // Modal open OTP backend se ayga
+    setShowOtpModal(true);
+    toast.info('Sending OTP to your email...');
+    try {
+      const res = await fetch('https://full-stack-website-h8ju.onrender.com/api/language/send-language-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: user.email }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success('OTP sent successfully!');
+      } else {
+        toast.error(data.message || 'Failed to send OTP');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Server error while sending OTP');
+    }
+  } else {
+    // other language bina OTP ke direct switch hongi
+      applyLanguage(langCode);
+    }
+  };
+
+ const handleVerifyOtp = async () => {
+  if (!otp.trim()) {
+    toast.error('enter your OTP ');
+    return;
+  }
+  try {
+    const res = await fetch('https://full-stack-website-h8ju.onrender.com/api/language/verify-language-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: user?.email, otp }),
+    });
+    const data = await res.json();
+      if (data.success) {
+        toast.success('OTP verified! Language switched to French.');
+        applyLanguage('fr');
+        setShowOtpModal(false);
+        setOtp('');
+      } else {
+        toast.error(data.message || 'Invalid or expired OTP');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Verification failed');
+    }
+  };
+
+ const applyLanguage = async (langCode: string) => {
+    setCurrentLang(langCode);
+    i18n.changeLanguage(langCode);
+    localStorage.setItem('preferred_language', langCode);
+
+    // Firestore Audit Log save 
+    try {
+      await addDoc(collection(db, 'language_audit_logs'), {
+        userId: user?.email || 'guest',
+        selectedLanguage: langCode,
+        timestamp: serverTimestamp(),
+        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'Unknown',
+      });
+    } catch (err) {
+      console.error('Audit log failed:', err);
+    }
+  };
+
+  useEffect(() => {
+    const saved = localStorage.getItem('preferred_language');
+    if (saved) {
+      setCurrentLang(saved);
+      i18n.changeLanguage(saved);
+    }
+    setMounted(true);//yeh code lagane se hydration problem and error 100% solve .
+  }, []); 
+
+  
+//yeh code lagane se hydration problem and error 100% solve .
+if (!mounted) {
+  return null; 
+}
 
   return (
     <div className="relative sticky top-0 z-50">
@@ -69,18 +182,20 @@ const Navbar = () => {
 
               {/* Desktop Navigation Links */}
               <div className="hidden md:flex items-center space-x-6">
+                <div className="hidden lg:flex items-center space-x-6">
                 <Link href="/pages/internship" className="text-gray-700 hover:text-blue-600 font-medium text-sm">
-                  Internships
+                  {t("internships")}
                 </Link>
                 <Link href="/pages/job" className="text-gray-700 hover:text-blue-600 font-medium text-sm">
-                  Jobs
+                 {t("jobs")}
                 </Link>
-                  <div className="flex items-center bg-gray-100 rounded-full px-3 py-1.5">
+                </div>
+                  <div className="hidden md:flex items-center bg-gray-100 rounded-full px-3 py-1.5">
                   <Search size={16} className="text-gray-400" />
                   <input
                     type="text"
-                    placeholder="Search opportunities..."
-                    className="ml-2 bg-transparent focus:outline-none text-sm w-44"
+                    placeholder={t("search_opportunities")}
+                    className="ml-2 bg-transparent focus:outline-none text-sm w-32"
                   />
                 </div>
               </div>
@@ -92,7 +207,7 @@ const Navbar = () => {
                   href="/pages/resumebuilder"
                   className="inline-block bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-6 py-2 rounded-full transition shadow-sm"
                 >
-                  Build Resume
+                  {t("build_resume")}
                 </Link>
             </div>
             
@@ -104,7 +219,7 @@ const Navbar = () => {
                   href="/pages/gmailloginpage"
                   className="inline-block bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-6 py-2 rounded-full transition shadow-sm"
                 >
-                  Email Login
+                  {t("email_login")}
                 </Link>
               )}
             </div>
@@ -121,7 +236,7 @@ const Navbar = () => {
                     className="px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded-lg border border-gray-200"
                     onClick={handlelogout}
                   >
-                    Logout
+                    {t("logout")}
                   </button>
                 </div>
               ) : (
@@ -136,15 +251,63 @@ const Navbar = () => {
                       <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                       <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                     </svg>
-                    <span>Google</span>
+                    <span>{t('google_btn')}</span>
                   </button>
                   <Link href="/pages/adminlogin" className="text-xs text-gray-600 hover:text-gray-900 font-medium">
-                    Admin
+                    {t("admin")}
                   </Link>
                 </div>
               )}
             </div>
+       {/* Language Select Dropdown */}
+        <select
+          value={currentLang}
+          onChange={(e) => handleLanguageChange(e.target.value)}
+          className="bg-white border border-gray-300 text-gray-800 text-xs sm:text-sm rounded-md px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          {languages.map((lang) => (
+            <option key={lang.code} value={lang.code}>
+              {lang.label}
+            </option>
+          ))}
+        </select>
+        {/* opt frech language me lene ke liya */}
+        {showOtpModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+            <div className="bg-white rounded-xl max-w-xs w-full p-5 text-center shadow-lg">
+              <h3 className="text-base font-bold text-gray-900">{t("email_verification")}</h3>
+              <p className="text-xs text-gray-500 mt-1">
+               {t("otp_modal_desc")}
+              </p>
 
+              <input
+                type="text"
+                maxLength={6}
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder={t("otp_placeholder")}
+                className="mt-3 w-full text-center tracking-widest text-base font-mono border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+
+              <div className="mt-4 flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowOtpModal(false)}
+                  className="w-1/2 py-2 text-xs border border-gray-300 rounded-lg text-gray-600"
+                >
+                  {t("cancel")}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleVerifyOtp}
+                  className="w-1/2 py-2 text-xs bg-blue-600 text-white rounded-lg font-medium"
+                >
+                  {t("verify")}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
             {/* Mobile Hamburger Button */}
             <div className="flex xl:hidden items-center">
               <button
@@ -175,28 +338,28 @@ const Navbar = () => {
                 onClick={() => setIsOpen(false)}
                 className="hover:text-blue-600 py-1"
               >
-                Internships
+                 {t("internships")}
               </Link>
               <Link
                 href="/pages/job"
                 onClick={() => setIsOpen(false)}
                 className="hover:text-blue-600 py-1"
               >
-                Jobs
+                 {t("jobs")}
               </Link>
               <Link
                 href="/pages/resumebuilder"
                 onClick={() => setIsOpen(false)}
                 className="text-gray-700 hover:text-blue-600 font-medium py-1 text-sm block"
               >
-                Build Resume
+                 {t("build_resume")}
               </Link>
               <Link
                 href="/pages/adminlogin"
                 onClick={() => setIsOpen(false)}
                 className="hover:text-blue-600 py-1 text-sm text-gray-500"
               >
-                Admin Login
+                {t("admin")}
               </Link>
             </div>
 
@@ -219,7 +382,7 @@ const Navbar = () => {
                     }}
                     className="px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 rounded-lg border border-red-200"
                   >
-                    Logout
+                    {t("logout")}
                   </button>
                 </div>
              ) : (
@@ -230,7 +393,7 @@ const Navbar = () => {
                     onClick={() => setIsOpen(false)}
                     className="w-full text-center bg-blue-500 text-white py-2.5 rounded-lg font-medium hover:bg-blue-600 transition"
                   >
-                    Email Login
+                    {t("email_login")}
                   </Link>
                   {/* Continue with Google Button */}
                   <button
@@ -246,7 +409,7 @@ const Navbar = () => {
                       <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
                       <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
                     </svg>
-                    <span>Continue with Google</span>
+                   <span>{t('google_btn')}</span>
                   </button>
                 </div>
               )}

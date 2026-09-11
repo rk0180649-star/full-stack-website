@@ -1,0 +1,41 @@
+{
+  "internships": "Internships",
+  "jobs": "Jobs",
+  "search_opportunities": "Search opportunities",
+  "build_resume": "Build Resume",
+  "email_login": "Email Login",
+  "google_btn": "Continue with Google",
+  "logout": "Logout",
+  "admin": "Admin",
+
+
+  "hero_title": "Make your dream career a reality",
+  "trending_on": "Trending on InternArea 🔥",
+  "connect_companies": "Connect With Top Companies",
+  "start_career": "Start Your Career Journey",
+  "learn_best": "Learn From The Best",
+  "grow_skills": "Grow Your Skills",
+  "latest_internships": "Latest internships on Intern Area",
+  "popular_categories": "POPULAR CATEGORIES",
+  "category_big_brands": "Big Brands",
+  "category_work_from_home": "Work From Home",
+  "category_part-time": "Part-time",
+  "category_mba": "MBA",
+  "category_engineering": "Engineering",
+  "category_media": "Media",
+  "category_design": "Design",
+  "category_data_science": "Data Science",
+  "latest_jobs": "Latest Jobs",
+  "actively_hiring": "Actively Hiring",
+  "internship": "Internship",
+  "job": "Job",
+  "view_details": "View Details",
+  "email_verification": "Email Verification",
+  "otp_modal_desc": "Please enter the OTP sent to your email to select French.",
+  "otp_placeholder": "Enter your OTP here",
+  "cancel": "Cancel",
+  "verify": "Verify"
+
+ 
+    
+}

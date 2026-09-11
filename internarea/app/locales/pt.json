@@ -1,0 +1,40 @@
+{
+  "internships": "Estágios",
+  "jobs": "Vagas",
+  "search_opportunities": "Buscar oportunidades",
+  "build_resume": "Criar currículo",
+  "email_login": "Entrar com e-mail",
+  "google_btn": "Continuar com o Google",
+  "logout": "Sair",
+  "admin": "Administrador",
+
+  
+  "hero_title": "Torne a carreira dos seus sonhos uma realidade",
+  "trending_on": "Em alta no InternArea 🔥",
+  "grow_skills": "Desenvolva suas habilidades",
+  "connect_companies": "Conecte-se com as melhores empresas",
+  "start_career": "Comece sua jornada profissional",
+  "learn_best": "Aprenda com os melhores",
+  "latest_internships": "Últimos estágios no Intern Area",
+  "popular_categories": "CATEGORIAS POPULARES",
+  "category_big_brands": "Grandes Marcas",
+  "category_work_from_home": "Home Office",
+  "category_part-time": "Meio Período",
+  "category_mba": "MBA",
+  "category_engineering": "Engenharia",
+  "category_media": "Mídia",
+  "category_design": "Design",
+  "category_data_science": "Ciência de Dados",
+  "latest_jobs": "Vagas Recentes",
+  "actively_hiring": "Contratação Ativa",
+  "internship": "Estágio",
+  "job": "Vaga",
+  "view_details": "Ver Detalhes",
+  "email_verification": "Verificação de E-mail",
+  "otp_modal_desc": "Insira o OTP enviado para o seu e-mail para selecionar Francês.",
+  "otp_placeholder": "Digite seu OTP aqui",
+  "cancel": "Cancelar",
+  "verify": "Verificar"
+
+
+}
