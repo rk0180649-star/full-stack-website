@@ -1,85 +1,12 @@
-
-"use client"; // <--- Yeh line sabse upar likhna zaroori hai
-import { useRouter,useParams } from "next/navigation"; // <--- next/router ki jagah next/navigation new code
+"use client"; 
+import { useRouter,useParams } from "next/navigation"; 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { 
-  ArrowUpRight, 
-  MapPin, 
-  DollarSign, 
-  Calendar, 
-  Clock, 
-  ExternalLink, 
-  X,
-  Book
-} from "lucide-react";
+import { ArrowUpRight, MapPin, DollarSign, Clock, ExternalLink, X, Book} from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { selectuser } from "@/app/Feature/Userslice";
-/*
-export const filteredJobs = [
-  {
-    _id: "101",
-    title: "Frontend Developer",
-    company: "Amazon",
-    location: "Remote",
-    CTC: "$100k/years",
-    Experience: "2+ years",
-    category: "Engineering",
-    Duration: "3 Months",
-    StartDate: "March 15, 2025",
-    aboutCompany:
-      "Tech Innovators is a leading software development company specializing in modern web applications.",
-    aboutJob:
-      "As a Frontend Developer Job, you will work on real-world projects using React.js and Tailwind CSS.",
-    Whocanapply:
-      "Students and fresh graduates with knowledge of HTML, CSS, JavaScript, and React.js.",
-    perks: "Certificate, Letter of Recommendation, Flexible Work Hours",
-    AdditionalInfo: "This is a remote internship with flexible working hours.",
-    numberOfOpening: "2",
-  },
-  {
-    _id: "102",
-    title: "Backend Developer",
-    company: "Cloud Systems",
-    location: "San Francisco",
-    CTC: "$90k/years",
-    Experience: "1+ years",
-    category: "Engineering",
-    Duration: "4 Months",
-    StartDate: "April 1, 2025",
-    aboutCompany:
-      "Cloud Systems focuses on scalable backend solutions and cloud-based applications.",
-    aboutJob:
-      "As a Backend Developer Job, you will work with Node.js, Express, and MongoDB.",
-    Whocanapply:
-      "Students with experience in backend technologies and databases.",
-    perks: "Certificate, Networking Opportunities, Paid Internship",
-    AdditionalInfo: "A strong foundation in databases is required.",
-    numberOfOpening: "3",
-  },
-  {
-    _id: "103",
-    title: "Data Analyst",
-    company: "Microsoft",
-    location: "New York",
-    CTC: "$100k/years",
-    Experience: "1+ years",
-    category: "Data Science",
-    Duration: "6 Months",
-    StartDate: "May 10, 2025",
-    aboutCompany:
-      "Creative Minds is a design agency focused on user experience and interface design.",
-    aboutJob:
-      "As a UI/UX Designer Job, you will work with Figma, Adobe XD, and design systems.",
-    Whocanapply:
-      "Students passionate about designing intuitive user experiences.",
-    perks: "Mentorship, Hands-on Projects, Letter of Recommendation",
-    AdditionalInfo: "A portfolio is required for application.",
-    numberOfOpening: "1",
-  },
-];*/
 
 const page = () => {
   const user=useSelector(selectuser)
@@ -108,34 +35,40 @@ const page = () => {
     return <div className="p-8 text-center text-gray-500">Loading...</div>;
   };
 
-    const handlesubmitapplication=async()=>{
-    if(!coverLetter.trim()){
-      toast.error("please write a cover letter");
-      return
+  // update submitApplication function
+  const submitApplication = async () => {
+      if (!user) {
+      alert("Please login first to apply.");
+      return;
     }
-    if(!availability){
-      toast.error("please select your availability");
-      return
-    }
-    try{
-      const applicationdata={
-        category: jobdata.category,
-        company: jobdata.company,
-        coverLetter:coverLetter,
-        user:user,
-        Application: id,
-        availability
+
+    try {
+      // 👉 YAHAN URL CHANGE KIYA HAI ("/api/apply")
+      const res = await axios.post("https://full-stack-website-h8ju.onrender.com/api/apply", {
+        company: jobdata?.company,
+        category: jobdata?.category,
+        coverLetter: coverLetter,
+        user: user,
+        Application: jobdata,
+      });
+
+      if (res.data.success) {
+        toast.success("Applied successfully!");
+        setIsModalOpen(false); // Modal band karein
       }
-      await axios.post("https://full-stack-website-h8ju.onrender.com/api/application", applicationdata)
-      toast.success("Application submit successfully");
-      router.push('/job')
-
-    }catch (error){
-      console.error(error);
-      toast.error("Failed to submit application");
-
+    } catch (error: any) {
+      const resData = error.response?.data;
+      
+      // Quota Limit Exhaust hone par
+      if (resData?.limitReached) {
+        if (confirm(`${resData.message}\n\nyou wanr to see Pricing Plans?`)) {
+          router.push("/pages/pricing");
+        }
+      } else {
+        toast.error(resData?.message || "Failed to apply.");
+      }
     }
-  }
+  };
 
 
 return (
@@ -306,7 +239,7 @@ return (
                   <div className="flex justify-end pt-4">
                     {user ?(
                       <button
-                       className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700" onClick={handlesubmitapplication}>
+                       className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700" onClick={submitApplication}>
                         Submit Application
                       </button>
                     ) : (

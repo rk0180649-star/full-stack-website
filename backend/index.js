@@ -22,6 +22,9 @@ const adminRoutes = require("./Routes/admin");
 const jobRoutes = require("./Routes/job");
 const resumeRoutes = require("./Routes/resume");
 const languageRoutes = require("./Routes/languageRoutes");
+const planRoutes = require("./Routes/planRoutes");
+const applyRoutes = require("./Routes/applyRoutes");
+
 
 // Routes Setup
 app.use("/api/auth", authRoutes);
@@ -31,6 +34,8 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/job", jobRoutes);
 app.use("/api/resume", resumeRoutes);
 app.use("/api/language", languageRoutes);
+app.use("/api/plan", planRoutes);
+app.use("/api/apply", applyRoutes);
 
 
 app.get("/", (req, res) => {

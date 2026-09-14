@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const resumeHistorySchema = new mongoose.Schema({
+const planHistorySchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.String,
     ref: "User",
@@ -9,8 +9,16 @@ const resumeHistorySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  resumeData: {
-    type: Object,
+  planId: {
+    type: String, // BRONZE, SILVER, GOLD
+    required: true,
+  },
+  amount: {
+    type: Number,
+    required: true,
+  },
+  quota: {
+    type: Number,
     required: true,
   },
   razorpayOrderId: {
@@ -21,13 +29,13 @@ const resumeHistorySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  amount: {
-    type: Number,
-    default: 50,
+  planStartDate: {
+    type: Date,
+    default: Date.now,
   },
-  isDefault: {
-    type: Boolean,
-    default: true,
+  planEndDate: {
+    type: Date,
+    required: true,
   },
   createdAt: {
     type: Date,
@@ -35,4 +43,4 @@ const resumeHistorySchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("ResumeHistory", resumeHistorySchema);
+module.exports = mongoose.model("PlanHistory", planHistorySchema);

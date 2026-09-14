@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -23,6 +22,26 @@ const Page = () => {
   // 2. Local state fallback (for email/manual login)
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+
+    // Subscription state
+const [subscription, setSubscription] = useState<any>(null);
+// Active user select karein (Redux se ya Local state se)
+  const activeUser = reduxUser || currentUser;
+  const activeEmail = activeUser?.email || activeUser?.user?.email;
+
+useEffect(() => {
+  if (activeEmail) {
+    fetch(`https://full-stack-website-h8ju.onrender.com/api/plan/subscription-status?email=${activeEmail.toLowerCase().trim()}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setSubscription(data.subscription);
+        }
+      });
+  }
+}, [activeEmail]);
+
+
 
   useEffect(() => {
     // Redux me user ho toh use use karein
@@ -153,6 +172,39 @@ const Page = () => {
                   Logout
                 </button>
               </div>
+
+              {/* Subscription Banner */}
+            <div className="mt-4 p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 flex flex-wrap items-center justify-between gap-3 text-left">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+                    Current Plan:
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-600 text-white uppercase">
+                    {subscription?.currentPlan || "FREE"}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-600 mt-1">
+                  Applications Remaining:{" "}
+                  <b className="text-blue-700">
+                    {subscription?.currentPlan === "GOLD"
+                      ? "Unlimited"
+                      : `${subscription?.applicationsLeft ?? 1} Applications`}
+                  </b>
+                </p>
+                {subscription?.currentPlan !== "FREE" && subscription?.daysLeft > 0 && (
+                  <p className="text-xs text-emerald-600 font-medium mt-0.5">
+                    Valid for next {subscription.daysLeft} days
+                  </p>
+                )}
+              </div>
+              <Link
+                href="/pages/pricing"
+                className="text-xs font-semibold text-blue-600 hover:text-blue-700 bg-white px-3 py-1.5 rounded-lg border border-blue-200 shadow-sm transition"
+              >
+                Upgrade Plan →
+              </Link>
+            </div>
             </div>
           </div>
         </div>

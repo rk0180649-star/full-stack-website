@@ -1,78 +1,12 @@
-"use client"; // <--- Yeh line sabse upar likhna zaroori hai
-import { useRouter, useParams } from "next/navigation"; // <--- next/router ki jagah next/navigation new code
+"use client"; 
+import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { 
-  ArrowUpRight, 
-  MapPin, 
-  DollarSign, 
-  Calendar, 
-  Clock, 
-  ExternalLink, 
-  X
-} from "lucide-react";
+import {  ArrowUpRight, MapPin, DollarSign, Calendar, Clock, ExternalLink, X} from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { selectuser } from "@/app/Feature/Userslice";
 import { useSelector } from "react-redux";
-
-/*
-export const internships = [
-  {
-    _id: "1",
-    title: "Frontend Developer Intern",
-    company: "Tech Innovators",
-    location: "Remote",
-    stipend: "$500/month",
-    Duration: "3 Months",
-    StartDate: "March 15, 2025",
-    aboutCompany:
-      "Tech Innovators is a leading software development company specializing in modern web applications.",
-    aboutInternship:
-      "As a Frontend Developer Intern, you will work on real-world projects using React.js and Tailwind CSS.",
-    Whocanapply:
-      "Students and fresh graduates with knowledge of HTML, CSS, JavaScript, and React.js.",
-    perks: "Certificate, Letter of Recommendation, Flexible Work Hours",
-    AdditionalInfo: "This is a remote internship with flexible working hours.",
-    numberOfOpening: "2",
-  },
-  {
-    _id: "2",
-    title: "Backend Developer Intern",
-    company: "Cloud Systems",
-    location: "San Francisco",
-    stipend: "$800/month",
-    Duration: "4 Months",
-    StartDate: "April 1, 2025",
-    aboutCompany:
-      "Cloud Systems focuses on scalable backend solutions and cloud-based applications.",
-    aboutInternship:
-      "As a Backend Developer Intern, you will work with Node.js, Express, and MongoDB.",
-    Whocanapply:
-      "Students with experience in backend technologies and databases.",
-    perks: "Certificate, Networking Opportunities, Paid Internship",
-    AdditionalInfo: "A strong foundation in databases is required.",
-    numberOfOpening: "3",
-  },
-  {
-    _id: "3",
-    title: "UI/UX Designer Intern",
-    company: "Creative Minds",
-    location: "New York",
-    stipend: "$600/month",
-    Duration: "6 Months",
-    StartDate: "May 10, 2025",
-    aboutCompany:
-      "Creative Minds is a design agency focused on user experience and interface design.",
-    aboutInternship:
-      "As a UI/UX Designer Intern, you will work with Figma, Adobe XD, and design systems.",
-    Whocanapply:
-      "Students passionate about designing intuitive user experiences.",
-    perks: "Mentorship, Hands-on Projects, Letter of Recommendation",
-    AdditionalInfo: "A portfolio is required for application.",
-    numberOfOpening: "1",
-  },
-];*/
 
 const page = () => {
   const params = useParams();
@@ -97,39 +31,40 @@ const page = () => {
   const [coverLetter, setCoverLetter] = useState ("");
   const user=useSelector(selectuser)
   
-  if (!internshipData) {
-    return <div className="p-8 text-center text-gray-500">Loading...</div>;
-  }
 
-  const handlesubmitapplication=async()=>{
-    if(!coverLetter.trim()){
-      toast.error("please write a cover letter");
-      return
+// update submitApplication function
+    const submitApplication = async () => {
+    if (!user) {
+      alert("Please login first to apply.");
+      return;
     }
-    if(!availability){
-      toast.error("please select your availability");
-      return
-    }
-    try{
-      const applicationdata={
-        category:internshipData.category,
-        company: internshipData.company,
-        coverLetter:coverLetter,
-        user:user,
-        Application: id,
-        availability
+    try {
+      // 👉 YAHAN URL CHANGE KIYA HAI ("/api/apply")
+      const res = await axios.post("https://full-stack-website-h8ju.onrender.com/api/apply", {
+        company: internshipData?.company,
+        category: internshipData?.category,
+        coverLetter: coverLetter,
+        user: user,
+        Application: internshipData,
+      });
+
+      if (res.data.success) {
+        toast.success("Applied successfully!");
+        setIsModalOpen(false); // Modal band karein
       }
-      await axios.post("https://full-stack-website-h8ju.onrender.com/api/application", applicationdata)
-      toast.success("Application submit successfully");
-      router.push('/internship')
-
-    }catch (error){
-      console.error(error);
-      toast.error("Failed to submit application");
-
+    } catch (error: any) {
+      const resData = error.response?.data;
+      
+      // Quota Limit Exhaust hone par
+      if (resData?.limitReached) {
+        if (confirm(`${resData.message}\n\nyou want to see Pricing Plans?`)) {
+          router.push("/pages/pricing");
+        }
+      } else {
+        toast.error(resData?.message || "Failed to apply.");
+      }
     }
-  }
-
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -299,7 +234,8 @@ const page = () => {
                   <div className="flex justify-end pt-4">
                     {user ?(
                       <button
-                       className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700" onClick={handlesubmitapplication}>
+                      onClick={submitApplication}
+                       className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700" >
                         Submit Application
                       </button>
                     ) : (

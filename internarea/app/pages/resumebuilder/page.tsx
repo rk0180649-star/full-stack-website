@@ -9,13 +9,11 @@ declare global {
     Razorpay: any;
   }
 }
-
 export default function ResumeBuilder() {
   // Live deployment ke liye live URL rakhein, local test ke liye localhost:5000
   const BACKEND_URL = "https://full-stack-website-h8ju.onrender.com";
-
   const user = useSelector((state: any) => state.user?.user);
-
+  
   const [formData, setFormData] = useState({
     fullName: "Rahul Sharma",
     email: "rahul@example.com",
@@ -117,11 +115,12 @@ export default function ResumeBuilder() {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                resumeData: formData,
-                userId: user?._id || null,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              resumeData: formData,
+              userId: user?._id || user?.uid || null,
+              email: user?.email || user?.user?.email || formData.email,
               }),
             });
             const result = await verifyRes.json();

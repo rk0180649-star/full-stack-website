@@ -114,24 +114,42 @@ exports.verifyPaymentAndGenerate = async (req, res) => {
       return res.status(400).json({ success: false, message: "Payment verification failed" });
     }
 
-    if (userId) {
-      await ResumeHistory.updateMany({ user: userId }, { isDefault: false });
-    
-      const savedResume = await ResumeHistory.create({
-        user: userId,
-        email: resumeData.email,
-        resumeData,
-        razorpayOrderId: razorpay_order_id,
-        razorpayPaymentId: razorpay_payment_id,
-        isDefault: true,
-      });
+  const targetEmail = (resumeData.email || req.body.email || "").toLowerCase().trim();
+    const cleanUserId = userId ? String(userId) : null;
 
-      await User.findByIdAndUpdate(userId, {
-        hasPurchasedResume: true,
-        purchasedResumeId: savedResume._id,
-      });
+    // Purani history default false karein
+    if (targetEmail) {
+      await ResumeHistory.updateMany({ email: targetEmail }, { isDefault: false });
     }
 
+    // Resume history save karein
+    const savedResume = await ResumeHistory.create({
+      user: cleanUserId,
+      email: targetEmail,
+      resumeData,
+      razorpayOrderId: razorpay_order_id,
+      razorpayPaymentId: razorpay_payment_id,
+      isDefault: true,
+    });
+
+    // User collection me resume purchase mark karein (Google user ke liye auto-upsert)
+      if (targetEmail) {
+        await User.findOneAndUpdate(
+          { email: targetEmail },
+          {
+            $set: {
+              hasPurchasedResume: true,
+              purchasedResumeId: savedResume._id,
+            },
+            $setOnInsert: {
+              name: resumeData.fullName || "Candidate",
+              // Plan/quota ka koi field yahan nahi aayega
+            },
+          },
+          { upsert: true, new: true }
+        );
+      }
+      
     const browser = await puppeteer.launch({ 
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"] 

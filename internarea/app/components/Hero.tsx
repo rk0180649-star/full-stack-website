@@ -98,6 +98,29 @@ export default function Hero() {
               </h1>
               <p className="text-xl text-gray-600">{t("trending_on")}</p>
             </div>
+            {/* plan */}
+            <div>
+              <div className="bg-gradient-to-r from-blue-900 via-indigo-800 to-purple-900 text-white py-12 px-6 rounded-2xl mx-auto max-w-6xl my-8 text-center shadow-lg">
+                <span className="bg-blue-500/20 text-blue-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider border border-blue-400/30">
+                  Supercharge Your Career
+                </span>
+                <h2 className="text-3xl sm:text-4xl font-extrabold mt-4 tracking-tight">
+                  Unlock Premium Internship Applications
+                </h2>
+                <p className="mt-3 text-base sm:text-lg text-gray-200 max-w-2xl mx-auto">
+                  Free plan includes 1 apply/month. Upgrade to Bronze, Silver, or Gold for higher quotas, faster responses, and unlimited access.
+                </p>
+                
+                <div className="mt-6 flex justify-center gap-4">
+                  <Link 
+                    href="/pages/pricing" 
+                    className="bg-white text-blue-900 font-bold px-6 py-3 rounded-lg shadow-md hover:bg-gray-100 transition duration-200"
+                  >
+                    View Plans & Pricing →
+                  </Link>
+                </div>
+              </div>
+          </div>
 
              {/* swiper section */}
             <div className="mb-16">

@@ -31,6 +31,30 @@ purchasedResumeId: {
   type: mongoose.Schema.Types.ObjectId,
   ref: "ResumeHistory",
 },
+ currentPlan: {
+    type: String,
+    enum: ["FREE", "BRONZE", "SILVER", "GOLD"],
+    default: "FREE",
+  },
+  planStatus: {
+    type: String,
+    enum: ["ACTIVE", "EXPIRED", "CANCELLED"],
+    default: "ACTIVE",
+  },
+    applicationQuota: {
+    type: Number,
+    default: 1,
+  },
+  applicationsUsed: {
+    type: Number,
+    default: 0,
+  },
+  planStartDate: {
+    type: Date,
+  },
+  planEndDate: {
+    type: Date,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
