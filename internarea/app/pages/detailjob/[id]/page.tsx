@@ -36,32 +36,43 @@ const page = () => {
   };
 
   // update submitApplication function
-  const submitApplication = async () => {
-      if (!user) {
+const submitApplication = async () => {
+    // 1. Safe extraction (Firebase Google user + Normal user dono ke liye)
+    const userEmail = 
+      user?.email || 
+      user?.user?.email || 
+      (typeof window !== "undefined" && JSON.parse(localStorage.getItem("user") || "{}")?.email) || 
+      "";
+
+    if (!userEmail) {
       alert("Please login first to apply.");
+      router.push("/pages/loginpage");
       return;
     }
 
     try {
-      // 👉 YAHAN URL CHANGE KIYA HAI ("/api/apply")
-      const res = await axios.post("https://full-stack-website-h8ju.onrender.com/api/apply", {
+      const res = await axios.post("http://localhost:5000/api/apply", {
         company: jobdata?.company,
         category: jobdata?.category,
         coverLetter: coverLetter,
-        user: user,
+        //  Email explicitly bhejien taaki backend ko dhoondhne me dikkat na ho:
+        email: userEmail,
+        user: {
+          ...user,
+          email: userEmail,
+          name: user?.name || user?.displayName || user?.user?.displayName || "Candidate",
+        },
         Application: jobdata,
       });
 
       if (res.data.success) {
-        toast.success("Applied successfully!");
-        setIsModalOpen(false); // Modal band karein
+        toast.success("Application successfully submitted!");
+        setIsModalOpen(false);
       }
     } catch (error: any) {
       const resData = error.response?.data;
-      
-      // Quota Limit Exhaust hone par
       if (resData?.limitReached) {
-        if (confirm(`${resData.message}\n\nyou wanr to see Pricing Plans?`)) {
+        if (confirm(`${resData.message}\n\nKya aap Pricing Plans dekhna chahte hain?`)) {
           router.push("/pages/pricing");
         }
       } else {
@@ -69,7 +80,6 @@ const page = () => {
       }
     }
   };
-
 
 return (
     <div className="max-w-4xl mx-auto px-4 py-8">
