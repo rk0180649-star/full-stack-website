@@ -51,7 +51,7 @@ const submitApplication = async () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/apply", {
+      const res = await axios.post("https://full-stack-website-h8ju.onrender.com/api/apply", {
         company: jobdata?.company,
         category: jobdata?.category,
         coverLetter: coverLetter,
