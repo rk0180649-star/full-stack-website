@@ -44,6 +44,7 @@ export default function ResumeBuilder() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [downloadLink, setDownloadLink] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -94,7 +95,7 @@ export default function ResumeBuilder() {
   };
 
   const initiateRazorpayPayment = async () => {
-    setLoading(true);
+    setIsGenerating(true) // loading start
     try {
       const orderRes = await fetch(`${BACKEND_URL}/api/resume/create-order`, {
         method: "POST",
@@ -132,6 +133,8 @@ export default function ResumeBuilder() {
             }
           } catch (err) {
             alert("PDF generation me error aaya.");
+          }finally{
+            setIsGenerating(false) //loading stop
           }
         },
         prefill: {
@@ -375,7 +378,7 @@ export default function ResumeBuilder() {
 
               <h3 className="text-lg font-bold text-slate-800">Identity Verification</h3>
               <p className="text-xs text-slate-500 mt-1">
-                Email par bheja gaya OTP enter karein ₹50 payment proceed karne ke liye.
+                enter your OTP and start ₹50 payment proceed .
               </p>
 
               {loading && step === "idle" && (
@@ -411,26 +414,38 @@ export default function ResumeBuilder() {
                   </div>
                 </div>
               )}
+             {/* 1. PDF Generation Loading State */}
+              {isGenerating && (
+                <div className="flex flex-col items-center justify-center py-6 gap-3">
+                  <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-sm font-semibold text-slate-700 text-center">
+                    Payment successful! Generating your ATS Resume PDF, please wait...
+                  </p>
+                </div>
+              )}
 
-              {step === "download_ready" && (
+              {/* 2. Download Ready State */}
+              {!isGenerating && step === "download_ready" && (
                 <div className="mt-4 space-y-3">
-                  <p className="text-sm font-semibold text-emerald-600">Payment Successful! PDF Generated.</p>
+                  <p className="text-sm font-semibold text-emerald-600 text-center">
+                    Payment Successful! PDF Generated.
+                  </p>
                   <a
                     href={downloadLink}
                     download="resume.pdf"
-                    className="block w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-sm font-medium transition"
+                    className="block w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md font-medium text-center"
                   >
                     Click to Download PDF
                   </a>
                   <button
                     onClick={() => setIsModalOpen(false)}
-                    className="w-full py-2 bg-slate-200 text-slate-700 rounded-md text-sm font-medium"
+                    className="w-full py-2 bg-slate-200 text-slate-700 rounded-md text-sm font-medium hover:bg-slate-300"
                   >
                     Close
                   </button>
                 </div>
               )}
-            </div>
+          </div>
           </div>
         )}
       </div>
