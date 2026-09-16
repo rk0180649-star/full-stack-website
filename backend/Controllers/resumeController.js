@@ -143,7 +143,6 @@ exports.verifyPaymentAndGenerate = async (req, res) => {
             },
             $setOnInsert: {
               name: resumeData.fullName || "Candidate",
-              // Plan/quota ka koi field yahan nahi aayega
             },
           },
           { upsert: true, new: true }
@@ -152,7 +151,7 @@ exports.verifyPaymentAndGenerate = async (req, res) => {
       
     const browser = await puppeteer.launch({ 
       headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"] 
+      args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
     });
     const page = await browser.newPage();
 
