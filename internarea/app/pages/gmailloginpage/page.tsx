@@ -1,12 +1,12 @@
 "use client";
-
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { auth, provider } from "@/app/firebase/firebase";
-import { signInWithPopup } from "firebase/auth";
+import { signInWithPopup, signOut } from "firebase/auth";
 import { useDispatch } from "react-redux";
-import { login } from "@/app/Feature/Userslice"; // Agar path alag ho toh match kar lein (e.g., "@/app/Feature/Userslice")
+import { login } from "@/app/Feature/Userslice";
+import OtpModal from "@/app/components/OtpModal";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -18,71 +18,177 @@ export default function LoginPage() {
   const [error, setError] = useState("");
 
   const BACKEND_URL = "https://full-stack-website-h8ju.onrender.com/api/auth";
+ 
+  // Security & OTP States
+  const [showOtpModal, setShowOtpModal] = useState<boolean>(false);
+  const [otpLoading, setOtpLoading] = useState<boolean>(false);
+  const [securityEmail, setSecurityEmail] = useState<string>("");
 
-  // 1. Manual Login (Email / Mobile)
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+// 1. Backend Security Check (Mobile Time & Chrome Check)
+const checkSecurityRules = async (userEmail: string) => {
+  try {
+    const res = await fetch("https://full-stack-website-h8ju.onrender.com/api/security/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: userEmail }),
+    });
+    const data = await res.json();
+    // Mobile Time Restriction Block (403)
+    if (res.status === 403) {
+      setError(data.message || "Mobile access restricted outside 10:00 AM - 1:00 PM IST");
+      return false;
+    }
+    // Chrome OTP Required
+    if (data.requireOtp) {
+      setSecurityEmail(userEmail);
+      setShowOtpModal(true);
+      return false;
+    }
+    return true; 
+  } catch (err: any) {
+    setError("Security check failed: " + err.message);
+    return false;
+  }
+};
 
-    try {
-      const res = await fetch(`${BACKEND_URL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier, password }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || "Invalid credentials");
-      }
-
-      // LocalStorage update
+// 2. OTP Verify Handler (Modal ke liye)
+const handleVerifyOtp = async (enteredOtp: string) => {
+  setOtpLoading(true);
+  try {
+    const res = await fetch("https://full-stack-website-h8ju.onrender.com/api/security/verify-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: securityEmail, otp: enteredOtp }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.message || "Invalid OTP");
+      return;
+    }
+    // Success - modal band 
+    setShowOtpModal(false);
+    // 1. Token save 
+    if (data.token) {
       localStorage.setItem("token", data.token);
+    }
+    // 2. User info localStorage aur Redux me save
+    if (data.user) {
       localStorage.setItem("user", JSON.stringify(data.user));
-
-      // REDUX State update (Iski wajah se poore app ko login state mil jayegi)
       dispatch(
         login({
-          name: data.user.name,
+          name: data.user.name || "User",
           email: data.user.email,
           photo: data.user.photo || "",
           uid: data.user._id || data.user.id,
         })
       );
-
-      router.push("/pages/profile");
-    } catch (err: any) {
-      setError(err.message || "Login failed");
-    } finally {
-      setLoading(false);
     }
-  };
+    // 3. Profile page par redirect 
+    router.push("/pages/profile");
+  } catch (err: any) {
+    alert("OTP verification error: " + err.message);
+  } finally {
+    setOtpLoading(false);
+  }
+};
 
-  // ... (baki ka JSX / Google Login code wahi rahega)
+// 3. Resend OTP Handler
+const handleResendOtp = async () => {
+  await fetch("https://full-stack-website-h8ju.onrender.com/api/security/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: securityEmail }),
+  });
+};
+
+  // 1. Manual Login (Email / Mobile)
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  setError("");
+  try {
+    // 1. Pehle Credentials verify karein aur local session 
+    const res = await fetch(`${BACKEND_URL}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ identifier, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.message || "Invalid credentials");
+    }
+    // 2. Token aur User local storage me save
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+    // 3. Security rules check karein (Chrome OTP check)
+    const passed = await checkSecurityRules(data.user.email || identifier);
+    if (!passed) {
+      return; // Chrome me OTP dialog open hoga
+    }
+    // 4. Redux state update karein
+    dispatch(
+      login({
+        name: data.user.name,
+        email: data.user.email,
+        photo: data.user.photo || "",
+        uid: data.user._id || data.user.id,
+      })
+    );
+ // 3. Profile page par redirect
+    router.push("/pages/profile");
+  } catch (err: any) {
+    setError(err.message || "Login failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
   // 2. Google Login
-  const handleGoogleLogin = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
+    const handleGoogleLogin = async () => {
+      try {
+        setError(""); // Purana error clear 
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+  
+        // 1. Pehle Security check karein (Storage update karne se pehle)
+        const passed = await checkSecurityRules(user.email || "");
+        
+        // Agar mobile block hai ya rule fail hua toh yahi cancel karein
+        if (!passed) {
+          await signOut(auth); // Firebase session turant khatam
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          return; 
+        }
+        // 2. Security pass hone par hi LocalStorage save 
+        const token = await user.getIdToken();
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            name: user.displayName,
+            email: user.email,
+            photo: user.photoURL,
+          })
+        );
+        localStorage.setItem("token", token);
+  
+        // 3. Database mein login session record 
+        await fetch("https://full-stack-website-h8ju.onrender.com/api/auth/record-login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: user.email,
+            name: user.displayName,
+          }),
+        });
+        // 4. Sab complete hone ke baad profile page par send karega
+        router.push("/pages/profile");
+      } catch (err: any) {
+        console.error("Google Sign-In Error:", err);
+        setError("Google Sign-In failed. Please try again.");
+      }
+    };
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          name: user.displayName,
-          email: user.email,
-          photo: user.photoURL,
-        })
-      );
-      localStorage.setItem("token", await user.getIdToken());
-
-      router.push("/pages/profile");
-    } catch (err: any) {
-      console.error("Google Sign-In Error:", err);
-      setError("Google Sign-In failed. Please try again.");
-    }
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
@@ -178,6 +284,15 @@ export default function LoginPage() {
           </Link>
         </p>
       </div>
+            {/* Chrome Login Security OTP Modal */}
+      <OtpModal
+        isOpen={showOtpModal}
+        userEmail={securityEmail}
+        loading={otpLoading}
+        onClose={() => setShowOtpModal(false)}
+        onVerify={handleVerifyOtp}
+        onResend={handleResendOtp}
+      />
     </div>
   );
 }

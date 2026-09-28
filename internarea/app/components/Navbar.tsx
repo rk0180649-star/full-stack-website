@@ -7,13 +7,14 @@ import { Search, Menu, X } from "lucide-react";
 import { signInWithPopup, signOut } from "firebase/auth";
 import { toast } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
-import { selectuser, logout } from "../Feature/Userslice";
+import { selectuser, logout, login } from "../Feature/Userslice";
 import { useRouter } from "next/navigation";
 // for language import here
 import "../locales/i18n"; // i18n ko initialize karne ke liye
 import { useTranslation } from 'react-i18next';
 import { db } from "../firebase/firebase";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import OtpModal from "@/app/components/OtpModal"; 
 
 interface User {
   name: string;
@@ -22,22 +23,175 @@ interface User {
 }
 
 const Navbar = () => {
-  const user = useSelector(selectuser);
-  const dispatch = useDispatch();
-  const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
+const user = useSelector(selectuser);
+const dispatch = useDispatch();
+const router = useRouter();
+const [isOpen, setIsOpen] = useState(false);
+  
+    //mutiple language setup start hero
+const [currentLang, setCurrentLang] = useState('en');
+const [showOtpModal, setShowOtpModal] = useState(false);
+const [otp, setOtp] = useState('');
+const { t, i18n } = useTranslation();
 
-  const handlelogin = async () => {
-    try {
-      await signInWithPopup(auth, provider);
-      toast.success("Logged in successfully");
-    } catch (error) {
-      console.error(error);
-      toast.error("Login failed");
+//yeh code lagane se hydration problem and error 100% solve .
+const [mounted, setMounted] = useState(false);
+
+
+      // Security & OTP States
+const [showOtpModalSecurity, setShowOtpModalSecurity] = useState<boolean>(false);
+const [otpLoading, setOtpLoading] = useState<boolean>(false);
+const [securityEmail, setSecurityEmail] = useState<string>("");
+const [error, setError] = useState("");
+
+  // 1. Backend Security Check Mobile Time Block & Chrome OTP Detection
+const checkSecurityRules = async (userEmail: string) => {
+  try {
+    setError("");
+    const res = await fetch("https://full-stack-website-h8ju.onrender.com/api/security/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: userEmail }),
+    });
+
+    const data = await res.json();
+
+    // RULE 1: Mobile Time Restriction Block (10 AM - 1 PM check)
+    if (res.status === 403) {
+      setError(data.message || "Mobile access restricted outside 10:00 AM - 1:00 PM IST");
+      return false;
     }
-  };
 
-  // Universal Logout (Google + Email dono ke liye)
+    // RULE 2: Chrome Browser detect hone par OTP modal open 
+    if (data.requireOtp) {
+      setSecurityEmail(userEmail);
+      setShowOtpModalSecurity(true);
+      return false; // Yahan rukega taaki user pehle OTP dale
+    }
+
+    // RULE 3: Edge ya non-Chrome browsers ke liye direct allow
+    return true;
+  } catch (err: any) {
+    setError("Security check failed: " + err.message);
+    return false;
+  }
+};
+
+// 2. Chrome OTP Verify Handler (Verify hone ke baad hi Profile par bhejega)
+const handleVerifyOtpSecurity = async (enteredOtp: string) => {
+  setOtpLoading(true);
+  try {
+    const res = await fetch("https://full-stack-website-h8ju.onrender.com/api/security/verify-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: securityEmail, otp: enteredOtp }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message || "Galat OTP dala hai");
+      return;
+    }
+
+    // Modal band karein
+    setShowOtpModalSecurity(false);
+
+    // Token & User details store karein
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+    }
+    if (data.user) {
+      localStorage.setItem("user", JSON.stringify(data.user));
+      if (typeof dispatch === "function") {
+        dispatch(
+          login({
+            name: data.user.name || "User",
+            email: data.user.email,
+            photo: data.user.photo || "",
+            uid: data.user._id || data.user.id,
+          })
+        );
+      }
+    }
+
+    // Verified hone ke baad profile page par redirect
+    router.push("/pages/profile");
+  } catch (err: any) {
+    alert("OTP verification error: " + err.message);
+  } finally {
+    setOtpLoading(false);
+  }
+};
+
+// 3. Resend OTP Handler
+const handleResendOtp = async () => {
+  await fetch("https://full-stack-website-h8ju.onrender.com/api/security/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: securityEmail }),
+  });
+};
+
+// 4. Google Login Handler (Mobile block, Chrome OTP, aur Edge direct handle karega)
+const handlelogin = async () => {
+  try {
+    setError("");
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    // 1. Mobile restriction & Security check
+    const passed = await checkSecurityRules(user.email || "");
+
+    // AGAR BLOCK HUA TOH YAHAN FIREBASE SESSION BHI DESTROY KAREIN
+    if (!passed) {
+      await signOut(auth); // Firebase auth listener ko turant trigger karke logout kar dega
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      return; // Yahan ruk jayega aur koi login state save nahi hogi
+    }
+
+    // 2. Pass hone par hi aage badhein
+    const token = await user.getIdToken();
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        name: user.displayName,
+        email: user.email,
+        photo: user.photoURL,
+      })
+    );
+    localStorage.setItem("token", token);
+
+    // 3. Database me session record karein
+    await fetch("https://full-stack-website-h8ju.onrender.com/api/auth/record-login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: user.email,
+        name: user.displayName,
+      }),
+    });
+
+    if (typeof dispatch === "function") {
+      dispatch(
+        login({
+          name: user.displayName,
+          email: user.email,
+          photo: user.photoURL || "",
+          uid: user.uid,
+        })
+      );
+    }
+
+    router.push("/pages/profile");
+  } catch (err: any) {
+    console.error("Google Sign-In Error:", err);
+    setError("Google Sign-In failed. Please try again.");
+  }
+};
+
+  // Universal Logout Google + Email dono ke liye
   const handlelogout = async () => {
     try {
       // 1. Firebase Logout (Google User)
@@ -60,15 +214,7 @@ const Navbar = () => {
     }
   };
 
-  //mutiple language setup start hero
-const [currentLang, setCurrentLang] = useState('en');
-const [showOtpModal, setShowOtpModal] = useState(false);
-const [otp, setOtp] = useState('');
-const { t, i18n } = useTranslation();
-
-//yeh code lagane se hydration problem and error 100% solve .
-const [mounted, setMounted] = useState(false);
-
+//language here
 const languages = [
   { code: 'en', label: 'English' },
   { code: 'es', label: 'Español' },
@@ -396,6 +542,12 @@ if (!mounted) {
                     {t("email_login")}
                   </Link>
                   {/* Continue with Google Button */}
+                  {/* 1. Error message yahan render hoga */}
+                  {error && (
+                    <div className="mb-4 rounded-xl border border-red-300 bg-red-50 p-3 text-center text-sm font-semibold text-red-600 shadow-sm">
+                      ⚠️ {error}
+                    </div>
+                  )}
                   <button
                     onClick={() => {
                       handlelogin();
@@ -417,6 +569,15 @@ if (!mounted) {
           </div>
         )}
       </nav>
+          {/* Chrome Login Security OTP Modal */}
+              <OtpModal
+                isOpen={showOtpModalSecurity}
+                userEmail={securityEmail}
+                loading={otpLoading}
+                onClose={() => setShowOtpModalSecurity(false)}
+                onVerify={handleVerifyOtpSecurity}
+                onResend={handleResendOtp}
+          />
     </div>
   );
 };

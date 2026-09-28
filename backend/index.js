@@ -24,6 +24,9 @@ const resumeRoutes = require("./Routes/resume");
 const languageRoutes = require("./Routes/languageRoutes");
 const planRoutes = require("./Routes/planRoutes");
 const applyRoutes = require("./Routes/applyRoutes");
+const securityRoutes = require("./Routes/securityRoutes")
+
+
 
 
 // Routes Setup
@@ -36,6 +39,9 @@ app.use("/api/resume", resumeRoutes);
 app.use("/api/language", languageRoutes);
 app.use("/api/plan", planRoutes);
 app.use("/api/apply", applyRoutes);
+app.use("/api/security", securityRoutes);
+
+
 
 
 app.get("/", (req, res) => {

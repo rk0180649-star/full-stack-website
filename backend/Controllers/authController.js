@@ -1,9 +1,15 @@
 
 const User = require("../Model/User");
 const OTP = require("../Model/OTP");
+const Session = require("../Model/Session");
+const LoginLog = require("../Model/LoginLog");
+const { getClientDetails } = require("../Utils/deviceDetector");
 const sendEmail = require("../Utils/sendEmail");
+const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
+
 
 // 1. Send OTP Function
 exports.sendOtp = async (req, res) => {
@@ -117,7 +123,9 @@ exports.login = async (req, res) => {
       process.env.JWT_SECRET || "mysecret",
       { expiresIn: "7d" }
     );
-
+       //SECURITY & HISTORY check
+        await recordEmailLoginSecurity(req, user);
+    //
     res.status(200).json({
       success: true,
       message: "Login successful",
@@ -204,3 +212,57 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// SECURITY & HISTORY] - EMAIL LOGIN SESSION & LOG TRACKER
+// Yeh function normal email/password login hone par Device info, IP, 
+// Active Session aur Login History database me store karta hai.
+
+const recordEmailLoginSecurity = async (req, user) => {
+  try {
+    const clientInfo = await getClientDetails(req);
+    const sessionToken = crypto.randomBytes(32).toString("hex");
+
+    // 1. Session create ya update karein (Single Device/Browser)
+    await Session.findOneAndUpdate(
+      {
+        email: user.email,
+        browser: clientInfo.browserName,
+        os: clientInfo.os,
+      },
+      {
+        userId: user._id,
+        email: user.email,
+        token: sessionToken,
+        browser: clientInfo.browserName,
+        browserName: clientInfo.browserName,
+        os: clientInfo.os,
+        deviceType: clientInfo.deviceType,
+        ipAddress: clientInfo.ipAddress,
+        location: `${clientInfo.city || ""}, ${clientInfo.country || ""}`,
+        lastActiveAt: new Date(),
+      },
+      { upsert: true, returnDocument: "after" }
+    );
+
+    // 2. SUCCESS Login Log add karein
+    await LoginLog.create({
+      userId: user._id,
+      email: user.email,
+      ipAddress: clientInfo.ipAddress,
+      browserName: clientInfo.browserName,
+      browserVersion: clientInfo.browserVersion,
+      os: clientInfo.os,
+      deviceType: clientInfo.deviceType,
+      city: clientInfo.city,
+      country: clientInfo.country,
+      status: "SUCCESS",
+    });
+
+    return sessionToken;
+  } catch (err) {
+    console.error("Email login tracking error:", err.message);
+    return null;
+  }
+};
+// authController.js me:
+exports.recordEmailLoginSecurity = recordEmailLoginSecurity;
