@@ -37,7 +37,7 @@ useEffect(() => {
 
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:5000/api/posts/feed?type=${activeTab}`, {
+      const res = await fetch(`https://full-stack-website-h8ju.onrender.com/api/posts/feed?type=${activeTab}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       const data = await res.json();
@@ -72,7 +72,7 @@ useEffect(() => {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/${postId}/like`, {
+      const res = await fetch(`https://full-stack-website-h8ju.onrender.com/api/posts/${postId}/like`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -92,7 +92,7 @@ useEffect(() => {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/friends/request", {
+      const res = await fetch("https://full-stack-website-h8ju.onrender.com/api/friends/request", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -116,7 +116,7 @@ const handleToggleFollow = async (targetUserId: string) => {
   }
 
   try {
-    const res = await fetch(`http://localhost:5000/api/friends/users/${targetUserId}/toggle-follow`, {
+    const res = await fetch(`https://full-stack-website-h8ju.onrender.com/api/friends/users/${targetUserId}/toggle-follow`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -168,7 +168,7 @@ const handleToggleFollow = async (targetUserId: string) => {
     if (!newContent || newContent === post.content) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/${post._id}`, {
+      const res = await fetch(`https://full-stack-website-h8ju.onrender.com/api/posts/${post._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -207,7 +207,7 @@ const handleToggleFollow = async (targetUserId: string) => {
     if (!confirm("Are you sure you want to delete this post?")) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/${post._id}`, {
+      const res = await fetch(`https://full-stack-website-h8ju.onrender.com/api/posts/${post._id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -237,7 +237,7 @@ const handleToggleFollow = async (targetUserId: string) => {
     if (!reason || !reason.trim()) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/${postId}/report`, {
+      const res = await fetch(`https://full-stack-website-h8ju.onrender.com/api/posts/${postId}/report`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -267,7 +267,7 @@ const handleToggleFollow = async (targetUserId: string) => {
     if (!text || !text.trim()) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/${postId}/comment`, {
+      const res = await fetch(`https://full-stack-website-h8ju.onrender.com/api/posts/${postId}/comment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

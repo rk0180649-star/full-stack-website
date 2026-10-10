@@ -19,7 +19,7 @@ export default function NotificationsPage() {
     }
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/api/posts/notifications", {
+      const res = await fetch("https://full-stack-website-h8ju.onrender.com/api/posts/notifications", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -40,7 +40,7 @@ export default function NotificationsPage() {
   // 2. Mark all as read
   const handleMarkAllRead = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/posts/notifications/mark-read", {
+      const res = await fetch("https://full-stack-website-h8ju.onrender.com/api/posts/notifications/mark-read", {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       });

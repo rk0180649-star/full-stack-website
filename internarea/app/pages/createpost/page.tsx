@@ -47,7 +47,7 @@ export default function CreatePostPage() {
 
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/api/posts/create", {
+      const res = await fetch("https://full-stack-website-h8ju.onrender.com/api/posts/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

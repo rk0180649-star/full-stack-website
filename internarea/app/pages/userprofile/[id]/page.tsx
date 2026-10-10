@@ -29,7 +29,7 @@ export default function UserProfilePage() {
         setLoading(true);
 
         // Feed API se posts filter karke user ke specific posts nikalna
-        const feedRes = await fetch("http://localhost:5000/api/posts/feed?type=recent", {
+        const feedRes = await fetch("https://full-stack-website-h8ju.onrender.com/api/posts/feed?type=recent", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const feedData = await feedRes.json();
@@ -58,7 +58,7 @@ export default function UserProfilePage() {
   // Friend Request Action
   const handleSendRequest = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/friends/request", {
+      const res = await fetch("https://full-stack-website-h8ju.onrender.com/api/friends/request", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -76,7 +76,7 @@ export default function UserProfilePage() {
   // Follow / Unfollow Action
   const handleToggleFollow = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/friends/users/${userId}/toggle-follow`, {
+      const res = await fetch(`https://full-stack-website-h8ju.onrender.com/api/friends/users/${userId}/toggle-follow`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });

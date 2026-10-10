@@ -21,7 +21,7 @@ export default function FriendsPage() {
 
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/api/friends/list", {
+      const res = await fetch("https://full-stack-website-h8ju.onrender.com/api/friends/list", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -44,7 +44,7 @@ export default function FriendsPage() {
   const handleAction = async (requestId: string, action: "accept" | "reject") => {
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:5000/api/friends/respond", {
+      const res = await fetch("https://full-stack-website-h8ju.onrender.com/api/friends/respond", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,7 +66,7 @@ export default function FriendsPage() {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch(`http://localhost:5000/api/friends/remove/${friendId}`, {
+      const res = await fetch(`https://full-stack-website-h8ju.onrender.com/api/friends/remove/${friendId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
