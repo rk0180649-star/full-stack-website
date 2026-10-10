@@ -6,7 +6,8 @@ import {
   Send,
   Users,
   BarChart,
-  Settings
+  Settings,
+  FileText
 } from 'lucide-react';
 
 const page = () => {
@@ -60,11 +61,14 @@ const page = () => {
       link: '/settings',
       color: 'bg-gray-600',
     },
+    {
+      title: 'Reports',
+      description: 'Admin Note: To view reports, log in as Admin first, open the Report Page, complete the standard login verification, and then return here to review all reported posts.',
+      icon: FileText,
+      link: '/pages/reportpage',
+      color: 'bg-indigo-600',
+    },
   ];
-
-  // Ya React Router hai toh 'react-router-dom' se import karein
-
-// ... stats aur menuItems variables ke baad ka return block:
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">

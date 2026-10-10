@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import logo from "../Assets/logo.png";
 import Link from "next/link";
 import { auth, provider } from "../firebase/firebase";
-import { Search, Menu, X } from "lucide-react";
+import { Search, Menu, X, LogIn } from "lucide-react";
 import { signInWithPopup, signOut } from "firebase/auth";
 import { toast } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
@@ -399,12 +399,12 @@ if (!mounted) {
                     </svg>
                     <span>{t('google_btn')}</span>
                   </button>
-                  <Link href="/pages/adminlogin" className="text-xs text-gray-600 hover:text-gray-900 font-medium">
-                    {t("admin")}
-                  </Link>
                 </div>
               )}
-            </div>
+            <Link href="/pages/adminlogin" className="text-xs text-gray-600 hover:text-gray-900 font-medium">
+            {t("admin")}
+            </Link>
+        </div>
        {/* Language Select Dropdown */}
         <select
           value={currentLang}

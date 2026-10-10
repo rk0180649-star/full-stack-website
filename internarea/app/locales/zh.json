@@ -34,7 +34,20 @@
   "otp_modal_desc": "请输入发送到您邮箱的验证码以选择法语。",
   "otp_placeholder": "在此输入您的验证码",
   "cancel": "取消",
-  "verify": "验证"
+  "verify": "验证",
 
+
+  "supercharge_career": "激发你的职业潜力",
+  "unlock_premium_title": "解锁高级实习申请",
+  "unlock_premium_desc": "免费计划每月包含 1 次申请。升级至青铜、白银或黄金会员，即可享受更高额度、更快回复以及无限访问权限。",
+  "view_plans_pricing": "查看方案与价格",
+
+  "community_feed_title": "社区动态",
+  "community_feed_desc": "探索想法、最新动态与学生讨论",
+  "open_full_feed": "打开完整动态 →",
+  "connect_peers_title": "结识同行，分享观点",
+  "connect_peers_desc": "发布动态、参与互动，了解学生们正在讨论的热门话题。",
+  "create_post": "+ 发布动态",
+  "explore_feed": "探索动态 🚀"
 
 }

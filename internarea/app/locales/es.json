@@ -34,7 +34,21 @@
   "otp_modal_desc": "Ingrese el OTP enviado a su correo electrónico para seleccionar Francés.",
   "otp_placeholder": "Ingrese su OTP aquí",
   "cancel": "Cancelar",
-  "verify": "Verificar"
+  "verify": "Verificar",
+
+
+  "supercharge_career": "POTENCIA TU CARRERA",
+  "unlock_premium_title": "Desbloquea Solicitudes de Pasantías Premium",
+  "unlock_premium_desc": "El plan gratuito incluye 1 postulación al mes. Actualiza a Bronce, Plata u Oro para obtener límites más altos, respuestas más rápidas y acceso ilimitado.",
+  "view_plans_pricing": "Ver Planes y Precios",
+
+  "community_feed_title": "Feed de la Comunidad",
+  "community_feed_desc": "Explora opiniones, actualizaciones y debates de estudiantes",
+  "open_full_feed": "Abrir Feed Completo →",
+  "connect_peers_title": "Conéctate con compañeros y comparte ideas",
+  "connect_peers_desc": "Publica actualizaciones, interactúa y mira de qué están hablando los estudiantes.",
+  "create_post": "+ Crear Publicación",
+  "explore_feed": "Explorar Feed 🚀"
   
 
 }

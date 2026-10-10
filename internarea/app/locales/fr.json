@@ -34,6 +34,20 @@
   "otp_modal_desc": "Veuillez saisir l'OTP envoyé à votre e-mail pour choisir le Français.",
   "otp_placeholder": "Entrez votre OTP ici",
   "cancel": "Annuler",
-  "verify": "Vérifier"
+  "verify": "Vérifier",
+
+
+  "supercharge_career": "BOOSTEZ VOTRE CARRIÈRE",
+  "unlock_premium_title": "Débloquez les Candidatures de Stage Premium",
+  "unlock_premium_desc": "Le forfait gratuit comprend 1 candidature/mois. Passez à Bronze, Argent ou Or pour des quotas plus élevés, des réponses plus rapides et un accès illimité.",
+  "view_plans_pricing": "Voir les Plans et Tarifs",
+
+  "community_feed_title": "Feed de la Comunidad",
+  "community_feed_desc": "Explora opiniones, actualizaciones y debates de estudiantes",
+  "open_full_feed": "Abrir Feed Completo →",
+  "connect_peers_title": "Conéctate con compañeros y comparte ideas",
+  "connect_peers_desc": "Publica actualizaciones, interactúa y mira de qué están hablando los estudiantes.",
+  "create_post": "+ Crear Publicación",
+  "explore_feed": "Explorar Feed 🚀"
 
 }

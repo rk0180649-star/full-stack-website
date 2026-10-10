@@ -1,7 +1,7 @@
 const express= require("express");
 const router = express.Router();
-const adminuser = "admin";
-const adminpass = "admin";
+const adminuser = process.env.ADMIN_USER;
+const adminpass = process.env.ADMIN_PASS;
 
 router.post("/adminlogin", (req, res) => {
     const { username, password } = req.body

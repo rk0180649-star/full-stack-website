@@ -5,14 +5,17 @@ const db = require("./db"); // db.js import
 
 dotenv.config();
 
-// Aapke db.js ke export function ko call karein
+// Aapke db.js ke export function ko call karega
 db.connect();
 
 const app = express();
 
 // Middlewares
 app.use(cors());
-app.use(express.json());
+//app.use(express.json());
+
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 // Routes Import
 const authRoutes = require("./Routes/authRoutes");
@@ -25,8 +28,8 @@ const languageRoutes = require("./Routes/languageRoutes");
 const planRoutes = require("./Routes/planRoutes");
 const applyRoutes = require("./Routes/applyRoutes");
 const securityRoutes = require("./Routes/securityRoutes")
-
-
+const postRoutes = require("./Routes/postRoutes");
+const friendRoutes = require("./Routes/friendRoutes");
 
 
 // Routes Setup
@@ -40,8 +43,8 @@ app.use("/api/language", languageRoutes);
 app.use("/api/plan", planRoutes);
 app.use("/api/apply", applyRoutes);
 app.use("/api/security", securityRoutes);
-
-
+app.use("/api/posts", postRoutes);
+app.use("/api/friends", friendRoutes);
 
 
 app.get("/", (req, res) => {

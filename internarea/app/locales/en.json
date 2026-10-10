@@ -34,7 +34,22 @@
   "otp_modal_desc": "Please enter the OTP sent to your email to select French.",
   "otp_placeholder": "Enter your OTP here",
   "cancel": "Cancel",
-  "verify": "Verify"
+  "verify": "Verify",
+
+
+  "supercharge_career": "SUPERCHARGE YOUR CAREER",
+  "unlock_premium_title": "Unlock Premium Internship Applications",
+  "unlock_premium_desc": "Free plan includes 1 apply/month. Upgrade to Bronze, Silver, or Gold for higher quotas, faster responses, and unlimited access.",
+  "view_plans_pricing": "View Plans & Pricing",
+
+
+  "community_feed_title": "Community Feed",
+  "community_feed_desc": "Explore thoughts, updates, and student discussions",
+  "open_full_feed": "Open Full Feed →",
+  "connect_peers_title": "Connect with peers & share ideas",
+  "connect_peers_desc": "Post updates, interact, and see what students are talking about.",
+  "create_post": "+ Create Post",
+  "explore_feed": "Explore Feed 🚀"
 
  
     

@@ -34,7 +34,19 @@
   "otp_modal_desc": "Insira o OTP enviado para o seu e-mail para selecionar Francês.",
   "otp_placeholder": "Digite seu OTP aqui",
   "cancel": "Cancelar",
-  "verify": "Verificar"
+  "verify": "Verificar",
 
+  "supercharge_career": "IMPULSIONE SUA CARREIRA",
+  "unlock_premium_title": "Desbloqueie Candidaturas a Estágios Premium",
+  "unlock_premium_desc": "O plano gratuito inclui 1 candidatura/mês. Faça upgrade para Bronze, Prata ou Ouro para cotas maiores, respostas mais rápidas e acesso ilimitado.",
+  "view_plans_pricing": "Ver Planos e Preços",
+
+  "community_feed_title": "Feed da Comunidade",
+  "community_feed_desc": "Explore ideias, atualizações e discussões entre estudantes",
+  "open_full_feed": "Abrir Feed Completo →",
+  "connect_peers_title": "Conecte-se com colegas e compartilhe ideias",
+  "connect_peers_desc": "Publique atualizações, interaja e veja sobre o que os estudantes estão falando.",
+  "create_post": "+ Criar Publicação",
+  "explore_feed": "Explorar Feed 🚀"
 
 }
