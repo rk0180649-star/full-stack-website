@@ -20,7 +20,7 @@ export default function ReportedPostsPage() {
 
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/api/posts/reports", {
+      const res = await fetch("https://full-stack-website-h8ju.onrender.com/api/posts/reports", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -43,7 +43,7 @@ export default function ReportedPostsPage() {
     if (!confirm("Are you sure you want to permanently delete this reported post?")) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/${postId}`, {
+      const res = await fetch(`https://full-stack-website-h8ju.onrender.com/api/posts/${postId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -58,7 +58,7 @@ export default function ReportedPostsPage() {
   // 3. Action: Report Dismiss/Ignore karna (Agar report galat ho)
   const handleDismissReport = async (postId: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/reports/${postId}/dismiss`, {
+      const res = await fetch(`https://full-stack-website-h8ju.onrender.com/api/posts/reports/${postId}/dismiss`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       });
